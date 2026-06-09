@@ -1800,17 +1800,14 @@ function saveRate(){
 
 // ─── 필라아저씨 카카오톡 ──────────────────────────────────────
 function openPila(){
-  const kakaoId='bum0058';
   const ua=navigator.userAgent;
   const isAndroid=/Android/i.test(ua);
-  // HTTPS 환경에서 딥링크 직접 실행 (file:// 와 달리 작동함)
+  // 카카오톡 앱 자체만 실행 (특정 화면 지정 안 함 → Play Store 안 거침)
   if(isAndroid){
-    window.location.href='intent://user?id='+kakaoId+'#Intent;scheme=kakaotalk;package=com.kakao.talk;end';
+    window.location.href='intent:#Intent;package=com.kakao.talk;end';
   } else {
-    window.location.href='kakaotalk://user?id='+kakaoId;
+    window.location.href='kakaotalk://';
   }
-  // 딥링크 실패 시 팝업으로 ID 복사 안내
-  setTimeout(()=>{ document.getElementById('pila-modal').style.display='flex'; }, 1200);
 }
 
 // ─── MY LOCATION ─────────────────────────────────────────────
