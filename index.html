@@ -305,7 +305,7 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
 #lock-screen{position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#1a1a2e 0%,#2d1b4e 50%,#E8472A 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px}
 #lock-screen.hide{animation:lockFadeOut .5s ease forwards}
 @keyframes lockFadeOut{to{opacity:0;pointer-events:none;visibility:hidden}}
-.lock-icon{width:130px;height:130px;object-fit:contain;margin-bottom:18px;filter:drop-shadow(0 4px 20px rgba(255,255,255,.2));animation:lockBounce 2s ease-in-out infinite}
+.lock-icon{width:130px;height:130px;object-fit:cover;border-radius:36px;margin-bottom:18px;filter:drop-shadow(0 4px 20px rgba(255,255,255,.2));animation:lockBounce 2s ease-in-out infinite}
 @keyframes lockBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .lock-title{color:#fff;font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:4px;text-shadow:0 2px 12px rgba(0,0,0,.3)}
 .lock-sub{color:rgba(255,255,255,.6);font-size:13px;margin-bottom:32px}
