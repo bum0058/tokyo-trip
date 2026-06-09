@@ -1802,10 +1802,11 @@ function saveRate(){
 function openPila(){
   const ua=navigator.userAgent;
   const isAndroid=/Android/i.test(ua);
-  // 카카오톡 앱 자체만 실행 (특정 화면 지정 안 함 → Play Store 안 거침)
   if(isAndroid){
-    window.location.href='intent:#Intent;package=com.kakao.talk;end';
+    // MAIN+LAUNCHER 액션으로 설치된 앱 바로 실행 (Play Store 미경유)
+    window.location.href='intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.kakao.talk;end';
   } else {
+    // iOS: 카카오톡 앱 실행
     window.location.href='kakaotalk://';
   }
 }
