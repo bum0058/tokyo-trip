@@ -112,13 +112,15 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
 .mf-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid var(--border);background:#fff;color:var(--sub);transition:.2s}
 .mf-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
 #map{height:calc(100vh - 180px)}
-.my-loc-btn{position:absolute;bottom:100px;right:10px;z-index:400;width:44px;height:44px;border-radius:50%;background:#fff;border:none;box-shadow:0 2px 12px rgba(0,0,0,.2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:.2s}
+.my-loc-btn{position:absolute;bottom:16px;right:16px;z-index:400;width:50px;height:50px;border-radius:50%;background:#fff;border:none;box-shadow:0 3px 16px rgba(0,0,0,.25);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:.2s}
 .my-loc-btn:active{transform:scale(.92);background:#f0f0f0}
 .my-loc-btn.locating{animation:pulse-btn .9s infinite}
 @keyframes pulse-btn{0%,100%{box-shadow:0 2px 12px rgba(0,0,0,.2)}50%{box-shadow:0 2px 20px rgba(0,122,255,.5)}}
 @keyframes pulse-dot{0%{transform:scale(1);opacity:1}100%{transform:scale(3);opacity:0}}
 .loc-dot-wrap{position:relative;width:18px;height:18px}
-.loc-dot{width:18px;height:18px;border-radius:50%;background:#007AFF;border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.loc-dot{width:16px;height:16px;border-radius:50%;background:#007AFF;border:2.5px solid white;box-shadow:0 1px 6px rgba(0,0,0,.4);position:relative;z-index:2}
+.loc-ring{position:absolute;inset:-6px;border-radius:50%;border:2.5px solid rgba(0,122,255,.45);animation:loc-pulse 1.8s ease-out infinite}
+@keyframes loc-pulse{0%{transform:scale(.7);opacity:1}100%{transform:scale(2.2);opacity:0}}
 .loc-ring{position:absolute;inset:0;border-radius:50%;background:rgba(0,122,255,.35);animation:pulse-dot 1.5s ease-out infinite}
 .map-legend-box{position:absolute;bottom:16px;right:10px;z-index:400;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-radius:14px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.15);font-size:11px}
 .map-legend-box h4{font-size:11px;font-weight:800;color:var(--text);margin-bottom:8px}
@@ -238,12 +240,14 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
 /* ============ MODALS ============ */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;backdrop-filter:blur(4px)}
 .overlay.open{display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:700px;max-height:92vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,20px);animation:slideUp .3s ease}
+.sheet{position:relative;background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:700px;max-height:92vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,20px);animation:slideUp .3s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0}
 .sheet-header{padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between}
 .sheet-title{font-size:18px;font-weight:800}
 .sheet-close{background:var(--bg);border:none;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--sub)}
+.sheet-close-abs{position:absolute;top:14px;right:14px;z-index:10;background:rgba(0,0,0,.45);border:none;width:34px;height:34px;border-radius:50%;font-size:17px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;line-height:1;backdrop-filter:blur(4px)}
+.sheet-close-abs:active{background:rgba(0,0,0,.7)}
 
 /* PLACE DETAIL */
 .detail-photos{position:relative;height:220px;background:#e8e8e8}
@@ -672,6 +676,7 @@ async function sendAccessNotify(){
 <div class="overlay" id="detail-overlay" onclick="overlayClose(event,'detail-overlay')">
   <div class="sheet" id="detail-sheet">
     <div class="sheet-handle"></div>
+    <button class="sheet-close-abs" onclick="closeOverlay('detail-overlay')" title="닫기">✕</button>
     <div class="detail-photos" id="detail-photos"></div>
     <div class="detail-body" id="detail-body"></div>
   </div>
@@ -1095,7 +1100,7 @@ function ratingHtml(p,large=false){
 function imgHtml(url,alt){
   return `<img src="${url}" alt="${alt}" loading="lazy" onerror="this.src='https://placehold.co/400x280/1a1a2e/FFB400?text=📷+사진+준비중'">`;
 }
-function openStorageInfo(){ document.getElementById('storage-overlay').classList.add('open'); }
+function openStorageInfo(){ document.getElementById('storage-overlay').classList.add('open'); pushOverlayState(); }
 function resetAllData(){
   if(!confirm('체크리스트·추가 장소·나만의 코스가 모두 삭제됩니다.\n정말 초기화할까요?')) return;
   localStorage.removeItem('tk_checks');
@@ -1303,7 +1308,7 @@ function openDetail(id){
     ${p.lat&&p.lng?`<a class="detail-map-btn" href="https://maps.google.com/?q=${p.lat},${p.lng}" target="_blank">📍 Google Maps에서 보기</a>`:''}
     ${p._custom?`<button onclick="deleteCustomPlace('${p.id}')" style="width:100%;margin-top:8px;background:#fff;border:2px solid #FF3B30;color:#FF3B30;border-radius:14px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">🗑 이 장소 삭제</button>`:''}
   `;
-  document.getElementById('detail-overlay').classList.add('open');
+  document.getElementById('detail-overlay').classList.add('open'); pushOverlayState();
 }
 
 function slideDetail(dir){
@@ -1321,7 +1326,7 @@ function openAddPlace(){
     document.getElementById(id).value='';
   });
   document.getElementById('ap-cat').value='attraction';
-  document.getElementById('add-overlay').classList.add('open');
+  document.getElementById('add-overlay').classList.add('open'); pushOverlayState();
 }
 
 function savePlace(){
@@ -1477,7 +1482,7 @@ function openCourseBuilder(courseId){
     cbDays=[{label:'DAY 1',items:[]}];
   }
   renderCBDays();
-  document.getElementById('cb-overlay').classList.add('open');
+  document.getElementById('cb-overlay').classList.add('open'); pushOverlayState();
 }
 
 function renderCBDays(){
@@ -1527,7 +1532,7 @@ function openPicker(dayIdx){
   pickerCallback=dayIdx;
   document.getElementById('picker-search').value='';
   renderPicker();
-  document.getElementById('picker-overlay').classList.add('open');
+  document.getElementById('picker-overlay').classList.add('open'); pushOverlayState();
 }
 
 function renderPicker(){
@@ -1606,7 +1611,7 @@ function viewMyCourse(id){
   document.getElementById('detail-photos').innerHTML='';
   document.getElementById('detail-photos').style.display='none';
   document.getElementById('detail-body').innerHTML=html;
-  document.getElementById('detail-overlay').classList.add('open');
+  document.getElementById('detail-overlay').classList.add('open'); pushOverlayState();
 }
 
 function deleteMyCourse(id){
@@ -1619,6 +1624,16 @@ function deleteMyCourse(id){
 // ─── OVERLAY HELPERS ──────────────────────────────────────────
 function overlayClose(e,id){
   if(e.target===document.getElementById(id))closeOverlay(id);
+}
+// 뒤로가기 버튼으로 오버레이 닫기
+window.addEventListener('popstate', function(e){
+  const openOverlay = document.querySelector('.overlay.open');
+  if(openOverlay){ closeOverlay(openOverlay.id); }
+});
+function pushOverlayState(){
+  if(window.history && window.history.pushState){
+    window.history.pushState({overlay:true}, '');
+  }
 }
 function closeOverlay(id){
   document.getElementById(id).classList.remove('open');
