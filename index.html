@@ -370,6 +370,7 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
           sessionStorage.setItem('tk_auth','ok');
           document.getElementById('lock-screen').classList.add('hide');
           setTimeout(()=>document.getElementById('lock-screen').style.display='none',500);
+          sendAccessNotify();
         }else{
           document.getElementById('lock-error').textContent='❌ 암호가 틀렸어요. 다시 입력해주세요!';
           setTimeout(()=>{pin='';updateDots();document.getElementById('lock-error').textContent='';},900);
@@ -388,6 +389,71 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
     }
   }
 })();
+
+// ─── 접속 알림 이메일 (Web3Forms) ─────────────────────
+async function sendAccessNotify(){
+  try{
+    // 1) IP + 위치 정보 가져오기
+    const geo = await fetch('https://ipapi.co/json/').then(r=>r.json()).catch(()=>({}));
+    const ip       = geo.ip       || '알 수 없음';
+    const country  = geo.country_name || geo.country || '알 수 없음';
+    const city     = geo.city     || '알 수 없음';
+    const region   = geo.region   || '';
+    const org      = geo.org      || '';
+    const lat      = geo.latitude || '';
+    const lng      = geo.longitude|| '';
+    const mapsLink = lat ? `https://maps.google.com/?q=${lat},${lng}` : '';
+
+    // 2) 기기 정보 파싱
+    const ua = navigator.userAgent;
+    let device = ua;
+    // 기종 추출 (예: SM-G991B, iPhone15,2 등)
+    const modelMatch = ua.match(/\(([^)]+)\)/);
+    const model = modelMatch ? modelMatch[1].split(';').map(s=>s.trim()).join(' / ') : ua;
+    // OS
+    const os = /iPhone|iPad|iPod/i.test(ua) ? 'iOS'
+             : /Android/i.test(ua)           ? 'Android'
+             : /Windows/i.test(ua)           ? 'Windows'
+             : /Mac/i.test(ua)               ? 'macOS' : '기타';
+    // 브라우저
+    const browser = /CriOS|Chrome/i.test(ua) ? 'Chrome'
+                  : /Firefox/i.test(ua)       ? 'Firefox'
+                  : /Safari/i.test(ua)        ? 'Safari'
+                  : /Samsung/i.test(ua)       ? 'Samsung Internet' : '기타';
+
+    // 3) 시간
+    const now = new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'});
+
+    // 4) 이메일 본문 구성
+    const body = [
+      '🔐 세윤's 도쿄 안심여행 플래너 접속 알림',
+      '─────────────────────────',
+      `⏰ 접속 시각  : ${now} (한국시간)`,
+      `🌐 IP 주소   : ${ip}`,
+      `🌍 국가      : ${country}`,
+      `📍 위치      : ${city}${region ? ' / '+region : ''}`,
+      `📡 통신사    : ${org}`,
+      `📱 OS        : ${os}`,
+      `🌐 브라우저  : ${browser}`,
+      `📲 기기 상세 : ${model}`,
+      mapsLink ? `🗺 지도 보기  : ${mapsLink}` : '',
+      '─────────────────────────',
+      '세윤의 도쿄 여행 플래너에 누군가 접속했어요! 💛',
+    ].filter(Boolean).join('\n');
+
+    // 5) Web3Forms 전송
+    await fetch('https://api.web3forms.com/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        access_key: 'd122f2f3-002b-4a96-8b15-f54a38e97436',
+        subject: `🔔 도쿄 플래너 접속 — ${country} ${city} (${now})`,
+        message: body,
+        from_name: '도쿄 여행 플래너 알림',
+      })
+    });
+  } catch(e){ /* 알림 실패해도 앱 동작에는 영향 없음 */ }
+}
 </script>
 
 
