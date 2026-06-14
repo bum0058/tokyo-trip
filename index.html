@@ -25,9 +25,10 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
 .header-tags{color:rgba(255,255,255,.8);font-size:10px;margin-top:3px;line-height:1.5;letter-spacing:.3px}
 .header-badge{background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;backdrop-filter:blur(10px);flex-shrink:0}
 .pila-btn{background:linear-gradient(135deg,#FFB400,#FF8C00);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;box-shadow:0 2px 8px rgba(255,140,0,.4);transition:.2s;white-space:nowrap}
-.photozone-btn{background:rgba(255,255,255,.25);backdrop-filter:blur(10px);color:#fff;border:2px solid rgba(255,255,255,.7);border-radius:16px;padding:8px 13px;font-size:22px;font-weight:900;cursor:pointer;flex-shrink:0;text-align:center;line-height:1.1;transition:.2s;box-shadow:0 3px 14px rgba(0,0,0,.15);text-shadow:0 1px 4px rgba(0,0,0,.2)}
-.photozone-btn span{display:block;font-size:11px;font-weight:800;letter-spacing:.5px;opacity:1;margin-top:1px}
-.photozone-btn:active{transform:scale(.93);background:rgba(255,255,255,.4)}
+.photozone-btn{background:rgba(255,255,255,.22);backdrop-filter:blur(12px);color:#fff;border:2px solid rgba(255,255,255,.75);border-radius:14px;padding:7px 11px 7px 9px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:6px;transition:.2s;box-shadow:0 3px 16px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.3);text-shadow:0 1px 4px rgba(0,0,0,.25)}
+.pzb-icon{font-size:20px;line-height:1;flex-shrink:0}
+.pzb-text{font-size:11px;font-weight:900;letter-spacing:.3px;line-height:1.35;text-align:left}
+.photozone-btn:active{transform:scale(.93);background:rgba(255,255,255,.38)}
 .pila-btn:active{transform:scale(.93)}
 
 /* ── BUDGET ─────────────────────────────── */
@@ -506,7 +507,7 @@ async function sendAccessNotify(){
       <h1>🗼 세윤's 도쿄 안심여행 플래너</h1>
       <div class="header-tags">#선한세윤 #1/2흡연 #금주 #넓은세상보기 #치유의여행 #필라아저씨 ✦ 東京</div>
     </div>
-    <button class="photozone-btn" onclick="openPhotoZone()">📸<br><span>도쿄스럽 포토 Tip</span></button>
+    <button class="photozone-btn" onclick="openPhotoZone()"><span class="pzb-icon">📸</span><span class="pzb-text">도쿄스럽<br>포토 Tip</span></button>
   </div>
 </div>
 
